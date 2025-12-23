@@ -1,69 +1,55 @@
 # BurpSide Assistant
 
-**BurpSide Assistant** is a hybrid Bug Hunting toolkit that bridges the gap between manual browser analysis and Burp Suite automation.
+BurpSide Assistant is a hybrid security toolkit designed to bridge the gap between manual browser intelligence and the automation of Burp Suite. It enables security researchers and bug bounty hunters to analyze modern Single Page Applications (SPAs) more effectively by leveraging data that is usually invisible to a standard HTTP proxy.
 
-It operates in two modes:
-1.  **Standalone Mode**: A powerful browser extension with a built-in "Hacker Dashboard" (DevTools) related to client-side reconnaissance, tracking vulnerabilities, and analyzing DOM state without needing a proxy.
-2.  **Hybrid Mode**: Connects to a companion Burp Suite extension to offload heavy tasks (Differential Analysis, Active Fuzzing) and sync session data.
+## Project Overview
 
-## Features (Planned & Implemented)
--   🕷️ **Hacker Dashboard**: A dedicated DevTools panel for real-time app analysis.
--   🔗 **Burp <-> Browser Bridge**: WebSocket connection for seamless data sync.
--   🕵️ **Client-Side Recon**: Auto-discovery of client-side routes (Router scanning) and hidden endpoints.
--   🧠 **State Analysis**: Monitoring Redux/Vuex state for secrets.
--   ⚡ **Automated Fuzzing**: Send interesting findings directly to Burp Scanner/Repeater.
+Modern web applications (React, Vue, Angular) rely heavily on client-side logic. Traditional proxies like Burp Suite only see the HTTP traffic on the wire, often missing:
+- Client-side routing logic (hidden paths).
+- Client-side state (sensitive data in Redux/Vuex).
+- DOM-based vulnerabilities (sinks that never trigger a network request).
 
-## Project Structure
-This is a monorepo containing:
--   `browser-extension/`: The React-based Chrome Extension (Vite + CRXJS).
--   `burp-extension/`: The Java-based Burp Suite Extension (Montoya API).
+BurpSide fills this gap by injecting a "Brain" directly into the browser.
 
----
+### Two Modes of Operation
 
-## 🚀 Getting Started
+**1. Standalone Mode**
+The extension operates independently as a Chrome DevTools panel. It uses the browser's own engine to:
+- **Map the Application**: Automatically discovering client-side routes (using router heuristics) to find endpoints that you haven't clicked on yet.
+- **Monitor Data**: Tracking LocalStorage and State changes in real-time.
+- **Find Vulnerabilities**: Analyzing DOM mutations to detect unsafe sink usage (DOM XSS) and exposing hidden form fields.
 
-### 1. Browser Extension (The Eye)
-**Requirements**: Node.js 18+
+**2. Hybrid Mode (with Burp Suite)**
+When connected to the companion Burp Suite extension, the tool becomes even more powerful:
+- **Traffic Sync**: Interesting findings (like a discovered API key in a JS file) are sent directly to Burp's Issue dashboard.
+- **Smart Bridge**: You can right-click any element in the DOM to send a specifically crafted request to Burp Repeater, bypassing complex client-side signing or encryption logic by letting the browser handle it first.
 
-1.  Navigate to the directory:
-    ```bash
-    cd browser-extension
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Build the extension:
-    ```bash
-    npm run build
-    ```
-4.  **Load into Chrome**:
-    -   Go to `chrome://extensions`.
-    -   Enable **Developer mode**.
-    -   Click **Load unpacked**.
-    -   Select the `browser-extension/dist` folder.
-5.  **Access the Dashboard**: Open Chrome DevTools (F12) and click the **BurpSide** tab.
+## Installation
 
-### 2. Burp Extension (The Brain)
-**Requirements**: Java 17+, Gradle (Wrapper included)
+### Prerequisites
+- Node.js (v18 or higher)
+- Java 17+ (for Burp component)
+- Burp Suite Professional or Community
 
-1.  Navigate to the directory:
-    ```bash
-    cd burp-extension
-    ```
-2.  Build the plugin:
-    ```bash
-    ./gradlew shadowJar
-    ```
-    *Build artifact will be at `build/libs/burp-extension-1.0-SNAPSHOT-all.jar`*
-3.  **Load into Burp Suite**:
-    -   Go to **Extensions** -> **Installed** -> **Add**.
-    -   Select **Extension type: Java**.
-    -   Select the `.jar` file created above.
+### Setting up the Browser Extension
+1.  Navigate to the `browser-extension` directory.
+2.  Install dependencies: `npm install`
+3.  Build the project: `npm run build`
+4.  Open Chrome and go to `chrome://extensions`.
+5.  Enable "Developer mode".
+6.  Click "Load unpacked" and select the `browser-extension/dist` folder.
+7.  Open Chrome DevTools (F12) to see the new **BurpSide** tab.
 
----
+### Setting up the Burp Suite Extension
+1.  Navigate to the `burp-extension` directory.
+2.  Build the jar file: `./gradlew shadowJar`
+3.  Open Burp Suite, go to **Extensions** -> **Hosted** -> **Add**.
+4.  Select "Java" and choose the built `.jar` file located in `burp-extension/build/libs/`.
 
-## 🤝 Contribution
-Created by [stealthmoud](https://github.com/stealthmoud).
+## Architecture
+This project is a monorepo containing:
+- `/browser-extension`: A React-based application built with Vite and CRXJS. It functions as both a popup and a DevTools panel.
+- `/burp-extension`: A Java plugin using the Montoya API that acts as a local server to receive data from the browser.
 
-Contributions are welcome! Please open an issue or PR if you have feature ideas for modern SPA bug hunting.
+## Contributing
+We welcome contributions to improve detection logic or add support for new frameworks. Please submit a Pull Request or open an issue for discussion.

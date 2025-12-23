@@ -9,4 +9,11 @@ export default defineConfig({
     react(),
     crx({ manifest }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        panel: 'src/devtools/panel.html',
+      },
+    },
+  },
 })

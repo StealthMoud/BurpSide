@@ -2,7 +2,7 @@ try {
     chrome.devtools.panels.create(
         "BurpSide",
         "", // Icon path
-        "src/devtools/panel.html",
+        "/src/devtools/panel.html",
         function (panel) {
             console.log("BurpSide Panel Created");
         }
