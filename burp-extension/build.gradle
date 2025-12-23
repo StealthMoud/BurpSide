@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.burpside'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.portswigger.burp.extensions:montoya-api:1.0.0'
+    implementation 'org.java-websocket:Java-WebSocket:1.6.0'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.burpside.BurpSideExtension'
+    }
+}

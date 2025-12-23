@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "BurpSide Assistant",
+    "version": "1.0.0",
+    "description": "Advanced Client-Side Bug Hunting Companion for Burp Suite",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "storage",
+        "webRequest",
+        "webNavigation",
+        "debugger"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "devtools_page": "src/devtools/devtools.html",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "background": {
+        "service_worker": "src/background/index.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "src/content/index.js"
+            ],
+            "run_at": "document_start"
+        }
+    ]
+}
